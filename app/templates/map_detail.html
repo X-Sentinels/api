@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% import "_macros.html" as macros %}
+
+{% block content %}
+<div id="wrapper">
+
+    <div class="col-lg-8 col-lg-offset-2">
+        <form method="post" action="">
+            <label > <h1>Map Detail</h1> </label>
+            <div class="form-group">
+                <label for="map_id">映射ID</label>
+                <input id="map_id"  class="form-control" type="text" placeholder="{{ map.map_id }}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="map_openfalcon_name">EndPoint 名字</label>
+                <input id="map_openfalcon_name" class="form-control" type="text" placeholder="{{ map.map_ofid }}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="map_openfalcon_id">EndPoint ID</label>
+                <input id="map_openfalcon_id" class="form-control" type="text" placeholder="{{ map.map_ofname}}" readonly>
+            </div>
+            <div>
+                <label for="map_desc">EndPoint 描述</label>
+                <input id="map_desc" name="map_desc" class="form-control" type="text" placeholder="{{ map.map_desc }}" >
+            </div>
+
+            <button style="margin-top: 25px" type="submit" class="btn btn-primary btn-lg btn-block">Update</button>
+
+            <a href="{{ url_for('map.mapconfig') }}">
+                <button style="margin-top: 25px" type="button" class="btn  btn-lg btn-block" >Cancel</button>
+            </a>
+
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}

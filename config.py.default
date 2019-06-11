@@ -1,0 +1,32 @@
+#-*-coding:utf-8-*-
+# VERSION
+
+VERSION = "0.0.1"
+BIND_ADDRESS = "0.0.0.0"
+PORT = 3456
+
+# flask run port
+KEY = ""
+SECRET_KEY = ""
+
+# secrect_key is used by session
+# pymysql是数据库驱动
+#SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://*:*@*:3306/*'
+SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://<mysql-root>:<root-passwd>@127.0.0.1:3306/myproject'
+SQLALCHEMY_TRACK_MODIFICATIONS = True
+
+# openfalcon user&password
+name = ""
+password = ""
+api_ip = "server_ip"
+api_addr = "http://{}:8080/api/v1".format(api_ip)
+
+
+
+
+
+
+
+
+
+

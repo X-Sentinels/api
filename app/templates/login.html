@@ -1,0 +1,78 @@
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static',filename='font-awesome/css/font-awesome.min.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/login.css')}}">
+
+</head>
+<div class="demo form-bg" style="padding:10%;height:100%">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-offset-3 col-md-6">
+                <form class="form-horizontal" >
+                    <span class="heading">用户登录</span>
+                    <div class="form-group">
+
+                        <input type="text" placeholder="name" id="name"
+                               class="form-control" required autofocus/>
+                        <i class="fa fa-user"></i>
+
+                        <!--{% for msg in get_flashed_messages() %}-->
+                        <!--<p style="color:red">{{msg}}</p>-->
+                        <!--{% endfor %}-->
+                    </div>
+
+                    <div class="form-group help">
+                        <input type="password" placeholder="password" id="password"
+                               class="form-control" required/>
+                        <i class="fa fa-lock"></i>
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-default btn-block" type="button" id="sign"
+                                onclick="login();">Sign in
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--<script type="text/javascript" src="{{url_for('static',filename='js/jquery-1.10.2.js')}}"></script>-->
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+<script>
+    function login() {
+        $.ajax({
+            url: 'http://202.120.83.82:8081/auth/login',
+            xhrFields: {withCredentials: true},
+            type: 'POST',
+            data: {
+                'name': $('#name').val(),
+                'password': $("#password").val(),
+                'ldap': "0"
+            },
+
+            success: function (json) {
+                console.log(json)
+                if (json.msg.length > 0) {
+                    alert(json.msg);
+                } else {
+
+                    alert("login success")
+                    //    var redirect_url = 'http://xxxx';
+                    //  location.href = redirect_url;
+                    window.location.replace("//202.120.83.82:3456");
+                }
+            },
+            dataType: "json"
+
+        });
+    }
+
+    //      window.onload = login
+</script>

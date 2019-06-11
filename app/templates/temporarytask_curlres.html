@@ -1,0 +1,99 @@
+<meta charset="UTF-8">
+{% extends "base.html" %}
+
+{% block content %}
+<div id="wrapper" class="col-lg-8 col-lg-offset-2" style="margin-top: 2%">
+    <div>
+        <table class="table table-condensed">
+            <caption>The Temporary Ping Results</caption>
+            <tr>
+                <td>Serial Number</td>
+                <td>Curl HttpCode</td>
+                <td>Curl HttpConnect</td>
+                <td>Curl NameLoopUp</td>
+            </tr>
+            <tr>
+                <td id="curl_serialnum"></td>
+                <td id="curl_httpcode"></td>
+                <td id="curl_httpconnect"></td>
+                <td id="curl_nameloopup"></td>
+            </tr>
+            <tr>
+                <td>Curl Redirect</td>
+                <td>Curl PreTranfer</td>
+                <td>Curl Connect</td>
+                <td>Curl StartTranfer</td>
+            </tr>
+            <tr>
+                <td id="curl_redirect"></td>
+                <td id="curl_pretransfer"></td>
+                <td id="curl_connect"></td>
+                <td id="curl_starttransfer"></td>
+            </tr>
+            <tr>
+                <td>Curl SpeedDownload</td>
+                <td>Curl Total</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td id="curl_speeddownload"></td>
+                <td id="curl_total"></td>
+                <td id=""></td>
+                <td id=""></td>
+            </tr>
+
+
+
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function sleep(numberMillis) {
+        var now = new Date();
+        var exitTime = now.getTime() + numberMillis;
+        while (true) {
+            now = new Date();
+            if (now.getTime() > exitTime)
+                return;
+        }
+    }
+
+    window.onload = function () {
+        var serialnum = '{{serialnum|safe}}'
+        console.log(serialnum);
+        var xhttp = new XMLHttpRequest();
+
+        xhttp.onreadystatechange = function () {
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+                // alert("ready=4");
+                var res = xhttp.responseText;
+                resjson = JSON.parse(res);
+                // console.log(resjson['ping_serialnum']);
+                // console.log(resjson['ping_averagetime']);
+
+                document.getElementById("curl_serialnum").innerText = resjson['curl_serialnum'];
+                document.getElementById("curl_connect").innerText = resjson['curl_connect'];
+                document.getElementById("curl_httpcode").innerText = resjson['curl_httpcode'];
+                document.getElementById("curl_httpconnect").innerText = resjson['curl_httpconnect'];
+                document.getElementById("curl_nameloopup").innerText = resjson['curl_nameloopup'];
+                document.getElementById("curl_pretransfer").innerText = resjson['curl_pretransfer'];
+                document.getElementById("curl_redirect").innerText = resjson['curl_redirect'];
+                document.getElementById("curl_speeddownload").innerText = resjson['curl_speeddownload'];
+                document.getElementById("curl_total").innerText = resjson['curl_total'];
+                document.getElementById("curl_starttransfer").innerText = resjson['curl_starttransfer'];
+
+
+            }
+        };
+        xhttp.open("POST", "/temporarytask/curl_serialnum/", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.send("curl_serialnum=" + serialnum);
+    }
+
+
+
+</script>
+{% endblock %}

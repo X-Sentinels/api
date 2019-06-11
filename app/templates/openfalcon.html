@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="wrapper">
+    <iframe width=1080 height=1530 frameborder=0 scrolling=auto src="http://[2001:da8:270:2020:f816:3eff:feca:5dcf]/" setAttribute="maplist"
+            onload="myfunction()"></iframe>
+</div>
+<script>
+    function myfunction() {
+        document.getElementById("name").value = "root";
+        var a = document.getElementById("name").getAttribute('placeholder');
+        console.log(a);
+        document.getElementById("password").value = "root";
+        var btn = document.getElementById("sign");
+        btn.click();
+        alert("ok")
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+{% block content %}
+<div id="wrapper">
+
+    <div id="page-wrapper">
+        <div class="row">
+
+            <div class="col-lg-12">
+                {% for msg in get_flashed_messages() %}
+            <div class="alert alert-dismissable alert-success">
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+              <strong>Well done!</strong> {{msg}} .
+          </div>
+                {% endfor %}
+            </div>
+
+             <div class="col-lg-4">
+          </div>
+            <div class="col-lg-4">
+            <h1>Ping</h1>
+            <form method="POST" >
+              <div class="form-group">
+                  <label class="control-label" >ipversion</label>
+               {{form.args_ipversion(value=result.args_ipversion)}}
+              </div>
+              <div class="form-group ">
+                  <label class="control-label" >url</label>
+                  {{form.args_url(value=result.args_url)}}
+              </div>
+                <div class="form-group ">
+                  <label class="control-label" >packagesize</label>
+                  {{form.args_packagesize(value=result.args_packagesize)}}
+              </div>
+                <div class="form-group ">
+                  <label class="control-label" >count</label>
+                  {{form.args_count(value=result.args_count)}}
+              </div>
+              <div class="form-group ">
+                  <label class="control-label" >timeout</label>
+                 {{form.args_timeout(value=result.args_timeout)}}
+              </div>
+                    <div class="form-group ">
+                 {{form.submit_ping}}
+                        {{form.csrf_token}}
+              </div>
+
+            </form>
+          </div>
+             <div class="col-lg-4">
+          </div>
+
+        </div><!-- /.row -->
+
+    </div><!-- /#page-wrapper -->
+
+</div><!-- /#wrapper -->
+{% endblock %}
+
+</html>

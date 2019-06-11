@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="wrapper" class="col-lg-8 col-lg-offset-2" style="margin-top: 2%">
+    <form action="" method="post">
+        <div class="form-group">
+            <label for="endpoint_select">Raspberry Node:</label>
+            <select id="endpoint_select" onchange="func(this.value)" onload="func(1)" class="form-control col-md-4">
+                <option value="" selected>--请选择--</option>
+                {% for ep in endpointlist %}
+                <option value="{{ ep.map_ofid }}">{{ ep.map_ofname }} | {{ ep.map_desc }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+
+    </form>
+
+    <script src="{{ url_for('static',filename='js/echarts.min.js' )}}"></script>
+    <script>
+        var endpoint_id;
+        var counter_select = document.getElementById("counter_select");
+        var timelist = new Array();
+        var valuelist = new Array();
+
+        function func(m) {
+            var xhttp = new XMLHttpRequest();
+            var xhttp_curl = new XMLHttpRequest();
+            var xhttp_ping = new XMLHttpRequest();
+            endpoint_id = m;
+            xhttp.onreadystatechange = function () {
+                if (xhttp.readyState == 4 && xhttp.status == 200) {
+                    var res;
+                    var curl_list;
+                    var ping_list;
+
+                    res = xhttp.responseText;
+
+                    resjson = JSON.parse(res);
+                    resjson1 = JSON.parse(resjson);
+
+
+
+                    // alert("这个节点有" + resjson1.length + "参数");
+
+                    for (var i = 0; i < resjson1.length; i++) {
+                        console.log(resjson1[i]);
+                        console.log(resjson1[i]['counter']);
+                        if (resjson1[i]['counter'] == 'endpointname') {
+                            document.getElementById("endpointname").innerHTML = resjson1[i]['value'];
+                            document.getElementById("endpointtime").innerHTML = resjson1[i]['timestamp'];
+
+                        }
+                        if (resjson1[i]['counter'] == 'counternum') {
+                            document.getElementById("counternum").innerHTML = resjson1[i]['value'];
+
+                        }
+
+
+                        if (resjson1[i]['counter'] == 'cpu.idle') {
+                            document.getElementById("cpu.idle").innerHTML = resjson1[i]['value'];
+
+                        }
+
+                        if (resjson1[i]['counter'] == 'cpu.system') {
+                            document.getElementById("cpu.system").innerHTML = resjson1[i]['value'];
+
+                        }
+                        if (resjson1[i]['counter'] == 'cpu.user') {
+                            document.getElementById("cpu.user").innerHTML = resjson1[i]['value'];
+
+                        }
+
+                        if (resjson1[i]['counter'] == 'mem.memfree.percent') {
+                            document.getElementById("mem.memfree.percent").innerHTML = resjson1[i]['value'];
+
+                        }
+                        if (resjson1[i]['counter'] == 'mem.swapfree.percent') {
+                            document.getElementById("mem.swapfree.percent").innerHTML = resjson1[i]['value'];
+
+                        }
+                        if (resjson1[i]['counter'] == 'mem.swapused.percent') {
+                            document.getElementById("mem.swapused.percent").innerHTML = resjson1[i]['value'];
+
+                        }
+
+
+                        if (resjson1[i]['counter'] == 'load.1min') {
+                            document.getElementById("load.1min").innerHTML = resjson1[i]['value'];
+
+                        }
+                        if (resjson1[i]['counter'] == 'load.5min') {
+                            document.getElementById("load.5min").innerHTML = resjson1[i]['value'];
+
+                        }
+                        if (resjson1[i]['counter'] == 'load.15min') {
+                            document.getElementById("load.15min").innerHTML = resjson1[i]['value'];
+
+                        }
+
+                        if (resjson1[i]['counter'] == 'DHT11.humidity/module=dht11') {
+                            document.getElementById("humidity").innerHTML = resjson1[i]['value'];
+
+                        }
+                        if (resjson1[i]['counter'] == 'DHT11.temperature/module=dht11') {
+                            document.getElementById("temperature").innerHTML = resjson1[i]['value'];
+
+                        }
+
+
+                        // if (resjson[i]['endpoint'] == 'TcpExt.TW') {
+                        //     // var node=document.createElement("h2");
+                        //     // var textnode=document.createTextNode(resjson[i]['endpoint']);
+                        //     document.getElementById("content-resume").innerText=resjson[i]['endpoint']
+                        // }
+                        //创建一个option 把数据存储在option
+                        // var op = new Option(resjson[i].counter, resjson[i].counter);
+
+                        //把带有数据的option 添加到第二个select
+                        // counter_select.add(op);
+                        // var node=document.createElement("h2");
+                        // var textnode=document.createTextNode(resjson[''])
+                    }
+
+
+
+                    curl_list = xhttp_curl.responseText;
+                    curl_listtemp = JSON.parse(curl_list);
+                    console.log("debug");
+                    console.log(curl_listtemp);
+                    document.getElementById("curlbody").innerHTML = "";
+                    for (var i = 0; i < curl_listtemp.length; i++) {
+                        console.log(curl_listtemp[i]);
+                        console.log(curl_listtemp[i]['curl_ipversion']);
+                        var paratr = document.createElement("tr");
+
+                        var paratd = document.createElement("td");
+                        var node = document.createTextNode(curl_listtemp[i]['curl_targeturl']);
+                        paratd.appendChild(node);
+                        paratr.appendChild(paratd);
+                        var paratd = document.createElement("td");
+                        var node = document.createTextNode(curl_listtemp[i]['curl_ipversion']);
+                        paratd.appendChild(node);
+                        paratr.appendChild(paratd);
+                        var paratd = document.createElement("td");
+                        var node = document.createTextNode(curl_listtemp[i]['curl_value']);
+                        paratd.appendChild(node);
+                        paratr.appendChild(paratd);
+
+                        var element=document.getElementById("curlbody");
+                        element.appendChild(paratr);
+
+                    }
+
+                    ping_list = xhttp_ping.responseText;
+                    ping_listtemp = JSON.parse(ping_list);
+                    console.log("debug");
+                    console.log(ping_listtemp);
+                    document.getElementById("pingbody").innerHTML = "";
+                    for (var i = 0; i < ping_listtemp.length; i++) {
+                        console.log(ping_listtemp[i]);
+                        console.log(ping_listtemp[i]['curl_ipversion']);
+                        var paratr = document.createElement("tr");
+
+                        var paratd = document.createElement("td");
+                        var node = document.createTextNode(ping_listtemp[i]['ping_targeturl']);
+                        paratd.appendChild(node);
+                        paratr.appendChild(paratd);
+                        var paratd = document.createElement("td");
+                        var node = document.createTextNode(ping_listtemp[i]['ping_ipversion']);
+                        paratd.appendChild(node);
+                        paratr.appendChild(paratd);
+                        var paratd = document.createElement("td");
+                        var node = document.createTextNode(ping_listtemp[i]['ping_value']);
+                        paratd.appendChild(node);
+                        paratr.appendChild(paratd);
+
+                        var element=document.getElementById("pingbody");
+                        element.appendChild(paratr);
+
+                    }
+                }
+            };
+
+
+            xhttp.open("POST", "/endpoint/raspberry/", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send("endpoint_id=" + m);
+            xhttp_curl.open("POST", "/endpoint/raspberry/curlres/", true);
+            xhttp_curl.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp_curl.send("endpoint_id=" + m);
+            xhttp_ping.open("POST", "/endpoint/raspberry/pingres/", true);
+            xhttp_ping.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp_ping.send("endpoint_id=" + m);
+
+        }
+
+        window.onload = func(1);
+
+    </script>
+
+</div>
+
+<!--<div id="chart" class="col-lg-10 col-lg-offset-2" style="margin-top: 3%; height: 600px;"></div>-->
+
+<div id="content-body" class="col-lg-10 col-md-offset-2" style="margin-top: 3%; height: 600px;">
+    <div id="content-resume" class="col-lg-3">
+        <h2>节点介绍</h2>
+        <hr>
+        <p>节点名称：<span id="endpointname"></span></p>
+        <hr>
+        <p>数据个数：<span id="counternum"></span></p>
+        <hr>
+        <p>机器时间：<span id="endpointtime"></span></p>
+        <hr>
+
+
+    </div>
+    <div id="content-cpu" class="col-lg-3">
+        <h2>CPU状态</h2>
+        <hr>
+        <p>cpu.idle: <span id="cpu.idle"></span></p>
+        <hr>
+        <p>cpu.system: <span id="cpu.system"></span></p>
+        <hr>
+        <p>cpu.user: <span id="cpu.user"></span></p>
+        <hr>
+    </div>
+    <div id="content-mem" class="col-lg-3">
+        <h2>Mem状态</h2>
+        <hr>
+        <p>mem.memfree.percent: <span id="mem.memfree.percent"></span></p>
+        <hr>
+        <p>mem.swapfree.percent: <span id="mem.swapfree.percent"></span></p>
+        <hr>
+        <p>mem.swapused.percent: <span id="mem.swapused.percent"></span></p>
+        <hr>
+    </div>
+    <div id="content-load" class="col-lg-3">
+        <h2>动态负载</h2>
+        <hr>
+        <p>load.1min: <span id="load.1min"></span></p>
+        <hr>
+        <p>load.5min: <span id="load.5min"></span></p>
+        <hr>
+        <p>load.15min: <span id="load.15min"></span></p>
+        <hr>
+    </div>
+    <div id="content-humiture" class="col-lg-12">
+        <h2>温湿度</h2>
+        <hr>
+        <p class="col-lg-6">DHT11.humidity：<span id="humidity"></span></p>
+
+        <p class="col-lg-6">DHT11.temperature：<span id="temperature"></span></p>
+        <br>
+        <hr>
+
+    </div>
+    <div id="content-ping" class="col-lg-6 ">
+        <h2>ping-状态</h2>
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-money"></i> Ping Latency</h3>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive" style="overflow: auto;height: 730px">
+                    <table class="table table-bordered table-hover table-striped tablesorter">
+                        <thead>
+                        <tr>
+                            <th>URL <i class="fa fa-sort"></i></th>
+                            <th>IP-Version <i class="fa fa-sort"></i></th>
+                            <th>Value <i class="fa fa-sort"></i></th>
+                        </tr>
+                        </thead>
+                        <tbody id="pingbody">
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <div id="content-curl" class="col-lg-6">
+        <h2>curl-状态</h2>
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-money"></i> Curl Total Time </h3>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive" style="overflow: auto;height: 730px">
+                    <table class="table table-bordered table-hover table-striped tablesorter">
+                        <thead>
+                        <tr>
+                            <th>URL <i class="fa fa-sort"></i></th>
+                            <th>IP-Version <i class="fa fa-sort"></i></th>
+                            <th>Value <i class="fa fa-sort"></i></th>
+                        </tr>
+                        </thead>
+                        <tbody id="curlbody">
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

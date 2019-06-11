@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="wrapper" class="col-lg-8 col-lg-offset-2" style="margin-top: 2%">
+    <form action="" method="post">
+        <div class="form-group">
+            <label for="endpoint_select">Raspberry Node:</label>
+            <select id="endpoint_select" onchange="func(this.value)" class="form-control col-md-4">
+                <option value="" selected>--请选择--</option>
+                {% for ep in endpointlist %}
+                <option value="{{ ep.map_ofid }}">{{ ep.map_ofname }} | {{ ep.map_desc }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="counter_select">Counter Name:</label>
+            <select id="counter_select" onchange="func2(this.value)" class="form-control col-md-4 ">
+                <option value="" selected>--请选择--</option>
+            </select>
+        </div>
+        <!--<input type="submit" class="btn-block btn-primary" value="Submit">-->
+    </form>
+
+    <script src="{{ url_for('static',filename='js/echarts.min.js' )}}"></script>
+    <script>
+        var endpoint_id;
+        var counter_select = document.getElementById("counter_select");
+        var timelist = new Array();
+        var valuelist = new Array();
+
+        function func(m) {
+            var xhttp = new XMLHttpRequest();
+            endpoint_id = m;
+            xhttp.onreadystatechange = function () {
+                if (xhttp.readyState == 4 && xhttp.status == 200) {
+
+                    var res = xhttp.responseText;
+                    resjson = JSON.parse(res);
+                    alert("这个节点有" + resjson.length + "参数");
+
+                    for (var i = 0; i < resjson.length; i++) {
+                        console.log(resjson[i].counter);
+
+                        //创建一个option 把数据存储在option
+                        var op = new Option(resjson[i].counter, resjson[i].counter);
+
+                        //把带有数据的option 添加到第二个select
+                        counter_select.add(op);
+                    }
+                }
+            };
+
+            // xhttp.open("GET", "/counter/" + m, true);
+            // xhttp.send();
+            xhttp.open("POST", "/endpoint/counter/", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send("endpoint_id="+m);
+
+        }
+
+        function func2(m) {
+            var xhttp = new XMLHttpRequest();
+
+            xhttp.onreadystatechange = function () {
+                if (xhttp.readyState == 4 && xhttp.status == 200) {
+                    timelist.splice(0, timelist.length);
+                    valuelist.splice(0, valuelist.length);
+                    var res1 = xhttp.responseText;
+                    resjson1 = JSON.parse(res1);
+
+
+                    // console.log(res1);
+                    // console.log(resjson1);
+                    // console.log(res1[0]);
+                    // console.log(resjson1[0]['timestamp']);
+                    // console.log(resjson1[0]['value']);
+
+                    for (var i = 0; i < resjson1.length; i++) {
+                        timelist.push(resjson1[i]['timestamp']);
+                        valuelist.push(resjson1[i]['value']);
+                    }
+                    // console.log(timelist);
+                    // console.log(valuelist);
+
+                    // timelist = new Array();
+                    // valuelist = new Array();
+
+                    var myChart = echarts.init(document.getElementById('chart'));
+
+                    // 指定图表的配置项和数据
+                    var option = {
+                        xAxis: {
+                            type: 'category',
+                            data: timelist
+                        },
+                        yAxis: {
+                            type: 'value'
+                        },
+                        series: [{
+                            data: valuelist,
+                            type: 'line'
+                        }]
+                    };
+
+                    // console.log(option)
+                    // 使用刚指定的配置项和数据显示图表。
+                    myChart.setOption(option);
+                }
+            };
+            // console.log("/counters/" + endpoint_id + "/" + m + "/")
+            // xhttp.open("GET", "/counters/" + endpoint_id + "/" + m + "/", true);
+            // xhttp.send();
+            xhttp.open("POST", "/endpoint/counters/", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send("endpoint_id="+endpoint_id+"&counter_name="+m);
+
+        }
+
+
+    </script>
+
+</div>
+
+<div id="chart" class="col-lg-10 col-lg-offset-2" style="margin-top: 3%; height: 600px;"></div>
+
+{% endblock %}

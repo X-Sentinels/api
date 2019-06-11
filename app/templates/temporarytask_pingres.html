@@ -1,0 +1,76 @@
+<meta charset="UTF-8">
+{% extends "base.html" %}
+
+{% block content %}
+<div  id="wrapper" class="col-lg-8 col-lg-offset-2" style="margin-top: 2%">
+    <div >
+        <table class="table table-condensed">
+            <caption>The Temporary Ping Results</caption>
+            <tr>
+                <td>Serial Number</td>
+                <td>Ping Average Time</td>
+                <td>Ping Max Time</td>
+                <td>Ping Loss Rate</td>
+            </tr>
+
+            <tr>
+                <td id="tdserialnum"></td>
+                <td id="tdaveragetime"></td>
+                <td id="tdmaxtime"></td>
+                <td id="tdlossrate"></td>
+            </tr>
+
+            <!-- <tr>
+                    <td id="tdserialnum">Serial Number</td>
+                    <td id="tdaveragetime">Ping Average Time</td>
+                    <td id="tdmaxtime">Ping Max Time</td>
+                    <td id="tdlossrate">Ping Loss Rate</td>
+            </tr> -->
+
+
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function sleep(numberMillis) {
+        var now = new Date();
+        var exitTime = now.getTime() + numberMillis;
+        while (true) {
+            now = new Date();
+            if (now.getTime() > exitTime)
+                return;
+        }
+    }
+
+    window.onload = function(){
+        var serialnum = '{{serialnum|safe}}'
+        console.log(serialnum);
+        var xhttp = new XMLHttpRequest();
+
+        xhttp.onreadystatechange = function () {
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+                // alert("ready=4");
+                var res = xhttp.responseText;
+                resjson = JSON.parse(res);
+                console.log(resjson['ping_serialnum']);
+                console.log(resjson['ping_averagetime']);
+
+                document.getElementById("tdserialnum").innerText = resjson['ping_serialnum'];
+                document.getElementById("tdaveragetime").innerText = resjson['ping_averagetime'];
+                document.getElementById("tdmaxtime").innerText = resjson['ping_maxtime'];
+                document.getElementById("tdlossrate").innerText = resjson['ping_lossrate'];
+                
+
+            }
+        };
+        xhttp.open("POST", "/temporarytask/ping_serialnum/", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.send("ping_serialnum=" + serialnum);
+    }
+
+    
+
+</script>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="wrapper" class="col-lg-8 col-lg-offset-2" style="margin-top: 2%">
+    <form action="" method="post">
+        <label>Ping Temporary Task :</label>
+
+        <div class="form-group">
+            <label for="serialnum">Serial Num</label> <input id="serialnum" name="serialnum" type="text" placeholder=""
+                class="form-control col-md-4" readonly>
+        </div>
+        <label for="endpoint_select">Raspberry Node:</label>
+        <select id="endpoint_select" name="endpoint_select" onchange="func(this.value)" class="form-control col-md-4">
+            <option value="" selected>--Please Slect One--</option>
+            {% for ep in endpointlist %}
+            <option value="{{ ep.map_ofname }}">{{ ep.map_ofname }} | {{ ep.map_desc }}</option>
+            {% endfor %}
+        </select>
+
+        <div class="form-group">
+            <label for="targeturl">Target URL : </label> <input id="targeturl" name="targeturl" type="text"
+                class="form-control col-md-4" placeholder="www.baidu.com">
+        </div>
+        <div class="col-lg-6 form-group" style="padding: 0px 10px 0px 0px ">
+            <label for="timeout" class="control-label">Time Out : </label> <input id="timeout" name="timeout"
+                type="text" class="form-control" placeholder="Timeout Number 5">
+        </div>
+        <div class="col-lg-6 form-group" style="padding: 0px  0px 0px 10px">
+            <label for="ipversion" class="control-label">ip Version : </label> <input id="ipversion" name="ipversion"
+                type="text" class="form-control" placeholder="4/6">
+        </div>
+
+        <button type="submit" id="btn" class="btn btn-primary btn-lg btn-block">Submit</button>
+
+    </form>
+
+</div>
+
+<script>
+    var endpoint_id;
+
+    function func(m) {
+        var xhttp = new XMLHttpRequest();
+        endpoint_id = m;
+        xhttp.onreadystatechange = function () {
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+
+                var res = xhttp.responseText;
+                resjson = JSON.parse(res);
+                alert("This Endpoint have" + resjson.length + " params");
+
+
+            }
+        };
+        // xhttp.open("GET", "/counter/" + m, true);
+        // xhttp.send();
+        xhttp.open("POST", "/endpoint/counter/", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.send("endpoint_id=" + m);
+
+    }
+
+    function getRandomCode(length) {
+        return Number(Math.random().toString().substr(3, length) + Date.now()).toString(36);
+    }
+
+    var serialnum = getRandomCode(10);
+    console.log(serialnum);
+
+    document.getElementById("serialnum").setAttribute("value", serialnum);
+    document.getElementById("serialnum").setAttribute("placeholder", serialnum);
+
+
+</script>
+
+{% endblock %}

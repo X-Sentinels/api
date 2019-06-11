@@ -1,7 +1,0 @@
-#idea file
-/.idea
-config.py
-/__pycache__
-/venv
-/app/__pycache__
-*.pyc
